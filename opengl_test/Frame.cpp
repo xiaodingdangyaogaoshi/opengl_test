@@ -30,6 +30,12 @@ GLuint selectBuf[BUFSIZE];
 const double PI = 3.1415926;
 
 static GLenum mode = GL_RENDER;
+/*
+GL_ENDER:渲染模式。几何体被光栅化，产生像素片段，
+这些片段被写入帧缓冲区。这是正常模式，也是默认模式
+*/
+
+
 
 //判断被选中的是哪个物体
 BOOL leftEye_Selected;
@@ -41,6 +47,7 @@ BOOL mouth_Selected;
 BOOL hair_Selected;
 BOOL tie_Selected;
 
+//数组保存位置
 GLuint leftEye[2] = { -65, 50 };
 GLuint rightEye[2] = { -135, 50 };
 GLuint leftArm[2] = { -50, 0 };
@@ -48,7 +55,7 @@ GLuint rightArm[2] = { -150, 0 };
 GLuint juPai[2] = { 100, 50 };
 GLuint mouth[2] = { -100, 60 };
 GLuint hair[2] = { 220, 150 };
-GLuint tie[2] = { 100,150 };
+GLuint tie[2] = { 100,150 };//gluint:正整型
 
 int body[2] = { -100, 50 };
 static int theta = 0;
@@ -289,18 +296,21 @@ void drawRightArm(int x, int y) {
 
 }
 void drawTie(int x, int y) {
-    glLoadIdentity();
-
-
-    glTranslatef(x, y, 0);
-    glRotatef(theta, 0, 0, 1);
+    glLoadIdentity();//重置当前指定的矩阵为单位矩阵.
+    glTranslatef(x, y, 0);//平移函数
+    glRotatef(theta, 0, 0, 1);//旋转函数
+    /*
+    先解释一下旋转方向，做(0,0,0)到(x,y,z)的向量，用右手握住这条向量，
+    大拇指指向向量的正方向，四指环绕的方向就是旋转的方向；
+    函数功能：以点(0,0,0)到点(x,y,z)为轴，旋转angle角度；
+    */
     glTranslatef(-x, -y, 0);
 
     glTranslatef(x, y, 0);
 
     glColor3f(tie_color[0], tie_color[1], tie_color[2]);
-    glBegin(GL_POLYGON);
-    glVertex3f(-9, 2, 0.5);
+    glBegin(GL_POLYGON);//GL_POLYGON：画凸多边形
+    glVertex3f(-9, 2, 0.5);//glVertex3f：设置顶点坐标
     glVertex3f(-9, -2, 0.5);
     glVertex3f(9, -2, 0.5);
     glVertex3f(9, 2, 0.5);
@@ -364,15 +374,7 @@ void drawJuPai(int x, int y) {
     glVertex3f(5, -20, 0.5);
     glEnd();
 
-    //手
-    glTranslatef(-40, -70, 0);
-    glRotatef(120, 0, 0, 1);
-    glScalef(0.25, 1, 1);
-    glColor3f(1, 1, 1);
-    drawCircle(100, 50, 180, 360);
-    glColor3f(0, 0, 0);
-    drawCircle2(100, 50, 180, 360);
-
+    
 
 
 }
@@ -407,7 +409,11 @@ void drawClothes(int x, int y) {
 void myDisplay()
 {
     /**************伊丽莎白de衣服（开始）**********************/
-
+    /*
+    GL_SELECT：选择模式。不会产生像素片段，也不会更改帧缓冲区内容。
+    相反，如果渲染模式为GL_render，则会在选择缓冲区中返回绘制的几何体名称的记录，
+    该缓冲区必须在输入选择模式之前创建（请参见GL select buffer）
+    */
     if (mode == GL_SELECT)
         glPushName(TIE);
     drawTie(tie[0], tie[1]);
@@ -533,14 +539,12 @@ void testDisplay() {
 
 void judegSectedObject(int x, int y) {
 
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
+    glClear(GL_COLOR_BUFFER_BIT);//清理缓冲
     GLint hits, viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport); //获得viewport  
-
-    glSelectBuffer(BUFSIZE, selectBuf);   //指定将“图元列表”（点击记录）返回到selectBuf数组中
-
+    glSelectBuffer(BUFSIZE, selectBuf);   //指定将“图元列表”（点击记录）
+    //返回到selectBuf数组中
+    cout << "selectbuffer" << *selectBuf << endl;
 
     mode = GL_SELECT;
     glRenderMode(mode);   //进入选择模式
@@ -552,7 +556,9 @@ void judegSectedObject(int x, int y) {
 
 
     gluPickMatrix(x, viewport[3] - y, 1, 1, viewport);
-    glOrtho(-300, 300, -200, 200, -10, 10);
+    //OpenGL就会创建一个拾取矩阵，分解这个矩阵的话，可以看到，
+    //这个矩阵就是上面的移动拾取框到原点，然后再放大为视体大小这两个步骤
+    glOrtho(-300, 300, -200, 200, -10, 10);//建立投影矩阵
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -566,14 +572,18 @@ void judegSectedObject(int x, int y) {
 
     mode = GL_RENDER;
     hits = glRenderMode(mode);
-
+    /*
+       GLint glRenderMode (GLenum mode);
+   //控制应用程序是处于渲染模式、选择模式还是反馈模式*/
+    
     cout << hits;
+    
     if (hits > 0) {
+        
         GLuint name, * ptr;
         ptr = selectBuf;
-
+        cout << "ptr : " << *ptr << endl;
         int selected_num = 0;
-
 
         for (int i = 0; i < hits; i++) {
             name = *ptr;
@@ -652,7 +662,7 @@ void judegSectedObject(int x, int y) {
 void mouseClick(int btn, int state, int x, int y) {
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         std::cout << "鼠标落下：" << x << "," << y << std::endl;
-        judegSectedObject(x, y);
+        judegSectedObject(x, y);//命名不规范，
     }
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP) {
         std::cout << "鼠标抬起：" << x << "," << y << std::endl;
@@ -671,12 +681,21 @@ void mouseClick(int btn, int state, int x, int y) {
 
 void init() {
 
-    glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); // Make round points, not square points  
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);  // Antialias the lines  
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_POINT_SMOOTH);//执行后，过虑线点的锯齿
+
+    glEnable(GL_LINE_SMOOTH);//执行后，过滤线段的锯齿
+
+    //表示是锯消除点采样的质量。 如果应用了一个较大的筛选器函数， 
+    //则将提示 GL_NICEST 可能会导致生成 过程中栅格化，更多像素碎片
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); 
+    //指示是锯消除行的采样质量。如果应用了一个较大的筛选器函数，
+    //则将提示 GL_NICEST 可能会导致生成过程中栅格化，更多像素碎片。
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);  
+
+    glEnable(GL_BLEND);////启用色彩混合
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//定义像素算法。
+    //指定红绿蓝和 alpha 源混合因子如何计算。初始值为GL_ONE
 
     leftEye_Selected = false;
     rightEye_selected = false;
@@ -687,22 +706,24 @@ void init() {
     hair_Selected = false;
     tie_Selected = false;
 
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);//启用深度测试。
+    //根据坐标的远近自动隐藏被遮住的图形（材料）
     glClearColor(0.5, 0.5, 0.5, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //表示要清除颜色缓冲以及深度缓冲
 }
 
 void display() {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);//投影
+    glPushMatrix();//入栈
+    glLoadIdentity();//重置当前指定的矩阵为单位矩阵.
 
 
-    glOrtho(-300, 300, -200, 200, -10, 10);
-    glMatrixMode(GL_MODELVIEW);
+    glOrtho(-300, 300, -200, 200, -10, 10);//一个平行投影修建空间
+    glMatrixMode(GL_MODELVIEW);//投影设置完成后开始画图,需要切换到模型视图矩阵才能正确画图.
     //glLoadIdentity();
     myDisplay();
-    glutSwapBuffers();
+    glutSwapBuffers();//交换两个缓冲区指针，解决了频繁刷新导致的画面闪烁问题
 }
 void upToRotate(int key, int x, int y) {
 
@@ -720,7 +741,6 @@ void upToRotate(int key, int x, int y) {
 }
 void mouseDrag(int x, int y) {
     std::cout << "鼠标拖动：" << x << "," << y << std::endl;
-
 
     if (leftEye_Selected) {
         leftEye[0] = x - window_width / 2;
@@ -762,12 +782,6 @@ void mouseDrag(int x, int y) {
 }
 void menu(int index) {
     double color[3] = { 0., 0., 0. };
-
-    /*double yellowishbrown[3] = { 1, 0.8, 0 };
-    double oranger[3] = { 1.0, 0.5, 0 };
-    double brown[3] = { 0.5, 0.25, 0. };
-    double purple[3] = { 0.8, 0.2, 0.8 };
-    double white[3] = { 1.0, 1.0, 1.0 };*/
 
     switch (index)
     {
@@ -892,15 +906,17 @@ void ChangeSize(int w, int h)
 
 
 int main(int argc, char* argv[]) {
+    //glut包通用的初始化方法
     glutInit(&argc, argv);
+    //函数功能为设置初始显示模式
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(window_width, window_height);
     glutCreateWindow("小菲酱");
-
+    //此处init（）方法为自己写的
     init();
 
-    glutReshapeFunc(ChangeSize);
-    glutDisplayFunc(display);
+    glutReshapeFunc(ChangeSize);///改变窗口大小时候保持形状比例
+    glutDisplayFunc(display);//用于注册一个绘图函数
     glutMouseFunc(mouseClick);
     glutMotionFunc(mouseDrag);
     glutSpecialFunc(upToRotate);
@@ -919,7 +935,6 @@ int main(int argc, char* argv[]) {
 
 
     glutMainLoop();
-
 
 	return 0;
 }
