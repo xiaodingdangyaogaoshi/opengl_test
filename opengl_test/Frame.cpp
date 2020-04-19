@@ -57,6 +57,19 @@ GLuint mouth[2] = { -100, 60 };
 GLuint hair[2] = { 220, 150 };
 GLuint tie[2] = { 100,150 };//gluint:正整型
 
+//对每一个部位设置缩放系数
+static int leftEye_N = 0;
+static int rightEye_N = 0;
+static int leftarm_N = 0;
+static int rightarm_N = 0;
+static int mouth_N = 0;
+static int jupai_N = 0;
+
+
+
+
+
+
 int body[2] = { -100, 50 };
 static int theta = 0;
 
@@ -134,7 +147,7 @@ void drawCircle2(int N, double radius, int angleStart = 0, int angleEnd = 360, i
 
 //画左眼
 void drawLeftEye(int x, int y) {
-
+    x = x - 5;
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
@@ -153,7 +166,8 @@ void drawLeftEye(int x, int y) {
 //画右眼
 void drawRightEye(int x, int y) {
     glLoadIdentity();
-
+    
+    x = x +5;
     glTranslatef(body[0], body[1], 0);
     glRotatef(theta, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
@@ -180,28 +194,29 @@ void drawMouth(int x, int y) {
 
     //描边
     glColor3f(0, 0, 0);
-
+    /*
     //下嘴唇
     //glTranslatef(x,y,0);
-    drawCircle2(50, 40, 235, 305, x, y);
+    drawCircle2(50, 60, 235, 305, x, y);
     //上色
     glColor3f(mouth_color[0], mouth_color[1], mouth_color[2]);
-    drawCircle(50, 40, 235, 305, x, y);
+    drawCircle(50, 60, 235, 305, x, y);*/
 
     //上嘴唇
     //glTranslatef(0,-61,0);
-    glColor3f(0, 0, 0);
-    drawCircle2(50, 40, 55, 125, x, y - 61);
+   /* glColor3f(0, 0, 0);
+    drawCircle2(50, 60, 55, 125, x, y - 61);*/
     //上色
     glColor3f(mouth_color[0], mouth_color[1], mouth_color[2]);
-    drawCircle(50, 40, 55, 125, x, y - 61);
+    cout << "mouth_N" << mouth_N << endl;
+    drawCircle(50, 80+mouth_N, 55, 125, x, y -18 );
 
     glColor3f(0, 0, 0);
     //glTranslatef(0, 30, 0);
-    glBegin(GL_LINES);
+    /*glBegin(GL_LINES);
     glVertex3f(x - 25, y - 31, 0.5);
     glVertex3f(x + 25, y - 31, 0.5);
-    glEnd();
+    glEnd();*/
 
 
 }
@@ -216,19 +231,21 @@ void drawHeadandBody(int x, int y) {
     glTranslatef(-body[0], -body[1], 0);
     //
     //描边
-    glColor3f(0, 0, 0);
-    drawCircle2(50, 60, 0, 180, x, y);
-    glBegin(GL_LINE_STRIP);
+    /*glColor3f(0, 0, 0);
+    drawCircle2(50, 60, 0, 360, x, y);
+    drawCircle2(60, 70, 0, 360, x, y - 120);*/
+    /*glBegin(GL_LINE_STRIP);
     glVertex3f(x + 60, y, 0.5f);
     glVertex3f(x + 65, y - 150, 0.5f);
     glVertex3f(x - 65, y - 150, 0.5f);
     glVertex3f(x - 60, y, 0.5f);
-    glEnd();
+    glEnd();*/
 
     glColor3f(1.0f, 1.0f, 1.0f);
     //画脑袋
     drawCircle(50, 60, 0, 360, x, y);
-    
+    drawCircle(60, 70, 0, 360, x, y - 120);
+    /*
     //画身体
     glBegin(GL_POLYGON);
     glVertex3f(x + 60, y, 0.5f);
@@ -236,6 +253,7 @@ void drawHeadandBody(int x, int y) {
     glVertex3f(x - 65, y - 150, 0.5f);
     glVertex3f(x + 65, y - 150, 0.5f);
     glEnd();
+    */
     
     
 }
@@ -248,17 +266,17 @@ void drawLeftArm(int x, int y) {
     glTranslatef(-body[0], -body[1], 0);
 
 
-    glTranslatef(x, y, 0);
-    glRotatef(30, 0, 0, 1);
-    glTranslatef(-x, -y, 0);
+    glTranslatef(x, y-15, 0);
+    glRotatef(110, 0, 0, 1);
+    glTranslatef(-x-30, -y+13, 0);
 
     glColor3f(1, 1, 1);
-    drawCircle(50, 50, 180, 360, x, y, 0.25);
+    drawCircle(50, 50+leftarm_N, 180, 360, x, y-15, 0.25);
     glColor3f(0, 0, 0);
-    drawCircle2(50, 50, 180, 360, x, y, 0.23);
-    drawCircle2(50, 50, 180, 360, x, y, 0.24);
-    drawCircle2(50, 50, 180, 360, x, y, 0.25);
-    drawCircle2(50, 50, 180, 360, x, y, 0.26);
+    /*drawCircle2(50, 50, 180, 360, x, y-15, 0.23);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.24);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.25);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.26);*/
 
 }
 void drawRightArm(int x, int y) {
@@ -269,17 +287,17 @@ void drawRightArm(int x, int y) {
     glRotatef(theta, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
-    glTranslatef(x, y, 0);
-    glRotatef(-30, 0, 0, 1);
-    glTranslatef(-x, -y, 0);
+    glTranslatef(x-50, y-190, 0);
+    glRotatef(-110, 0, 0, 1);
+    //glTranslatef(-x-30, -y-28, 0);
 
     glColor3f(1, 1, 1);
-    drawCircle(50, 50, 180, 360, x, y, 0.25);
+    drawCircle(50, 50, 180, 360, x, y-15, 0.25);
     glColor3f(0, 0, 0);
-    drawCircle2(50, 50, 180, 360, x, y, 0.23);
-    drawCircle2(50, 50, 180, 360, x, y, 0.24);
-    drawCircle2(50, 50, 180, 360, x, y, 0.25);
-    drawCircle2(50, 50, 180, 360, x, y, 0.26);
+    /*drawCircle2(50, 50, 180, 360, x, y-15, 0.23);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.24);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.25);
+    drawCircle2(50, 50, 180, 360, x, y-15, 0.26);*/
 
 
 }
@@ -361,7 +379,7 @@ void drawJuPai(int x, int y) {
     glVertex3f(5, -50, 0.5);
     glVertex3f(5, -20, 0.5);
     glEnd();
-
+    /*
     //手
     glTranslatef(-40, -70, 0);
     glRotatef(120, 0, 0, 1);
@@ -370,7 +388,7 @@ void drawJuPai(int x, int y) {
     drawCircle(100, 50, 180, 360);
     glColor3f(0, 0, 0);
     drawCircle2(100, 50, 180, 360);
-    
+    */
 
 
 }
@@ -410,9 +428,9 @@ void myDisplay()
     相反，如果渲染模式为GL_render，则会在选择缓冲区中返回绘制的几何体名称的记录，
     该缓冲区必须在输入选择模式之前创建（请参见GL select buffer）
     */
-    if (mode == GL_SELECT)
+    /*if (mode == GL_SELECT)
         glPushName(TIE);
-    drawTie(tie[0], tie[1]);
+    drawTie(tie[0], tie[1]);*/
 
 
     if (mode == GL_SELECT)
@@ -648,9 +666,6 @@ void judegSectedObject(int x, int y) {
         }
     }
 
-
-
-
     glMatrixMode(GL_MODELVIEW);
 
 
@@ -723,15 +738,71 @@ void display() {
 }
 void upToRotate(int key, int x, int y) {
 
-    if (key == GLUT_KEY_UP) {
+    if (key == GLUT_KEY_RIGHT) {
         theta += 10;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         display();
     }
-    if (key == GLUT_KEY_DOWN) {
+    if (key == GLUT_KEY_LEFT) {
         theta -= 10;
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         display();
+    }
+    if (key == GLUT_KEY_UP) {
+        if (mouth_Selected) {
+            mouth_N += 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftArm_Selected) {
+            leftarm_N += 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightArm_Selected) {
+            rightarm_N += 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (juPai_Selected) {
+            jupai_N += 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (mouth_Selected) {
+            mouth_N += 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        
+    }
+    if (key == GLUT_KEY_DOWN) {
+        if (mouth_Selected) {
+            mouth_N -= 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftArm_Selected) {
+            leftarm_N -= 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightArm_Selected) {
+            rightarm_N -= 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (juPai_Selected) {
+            jupai_N -= 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (mouth_Selected) {
+            mouth_N -= 5;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+
     }
 
 }
