@@ -84,6 +84,10 @@ double white[3] = { 1.0, 1.0, 1.0 };
 
 GLfloat fAspect;
 
+/****************************/
+float xx[50], yy[50] = { 0 };
+const int N = 40;
+
 void drawString(const char* str) {
     static int isFirstCall = 1;
     static GLuint lists;
@@ -137,16 +141,7 @@ void drawLeftEye(int x, int y) {
     glRotatef(theta, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
-    //睫毛
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(x + 0, y + 10, 0.5);
-    glVertex3f(x + 0, y + 15, 0.5);
-    glVertex3f(x + 5, y + 5 * sqrt(3), 0.5);
-    glVertex3f(x + 10, y + 13, 0.5);
-    glVertex3f(x - 5, y + 5 * sqrt(3), 0.5);
-    glVertex3f(x - 10, y + 13, 0.5);
-    glEnd();
+    
     //眼线
     drawCircle2(100, 10, 0, 360, x, y);
     //眼珠
@@ -164,16 +159,7 @@ void drawRightEye(int x, int y) {
     glTranslatef(-body[0], -body[1], 0);
 
     glColor3f(0.0f, 0.0f, 0.0f);
-    //睫毛
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(x + 0, y + 10, 0.5);
-    glVertex3f(x + 0, y + 15, 0.5);
-    glVertex3f(x + 5, y + 5 * sqrt(3), 0.5);
-    glVertex3f(x + 10, y + 13, 0.5);
-    glVertex3f(x - 5, y + 5 * sqrt(3), 0.5);
-    glVertex3f(x - 10, y + 13, 0.5);
-    glEnd();
+    
     //画眼线
     drawCircle2(100, 10, 0, 360, x, y);
     //眼珠
@@ -242,7 +228,7 @@ void drawHeadandBody(int x, int y) {
     glColor3f(1.0f, 1.0f, 1.0f);
     //画脑袋
     drawCircle(50, 60, 0, 360, x, y);
-
+    
     //画身体
     glBegin(GL_POLYGON);
     glVertex3f(x + 60, y, 0.5f);
@@ -250,6 +236,8 @@ void drawHeadandBody(int x, int y) {
     glVertex3f(x - 65, y - 150, 0.5f);
     glVertex3f(x + 65, y - 150, 0.5f);
     glEnd();
+    
+    
 }
 void drawLeftArm(int x, int y) {
 
@@ -374,6 +362,14 @@ void drawJuPai(int x, int y) {
     glVertex3f(5, -20, 0.5);
     glEnd();
 
+    //手
+    glTranslatef(-40, -70, 0);
+    glRotatef(120, 0, 0, 1);
+    glScalef(0.25, 1, 1);
+    glColor3f(1, 1, 1);
+    drawCircle(100, 50, 180, 360);
+    glColor3f(0, 0, 0);
+    drawCircle2(100, 50, 180, 360);
     
 
 
@@ -424,9 +420,9 @@ void myDisplay()
     drawJuPai(juPai[0], juPai[1]);
 
 
-    if (mode == GL_SELECT)
+    /*if (mode == GL_SELECT)
         glPushName(HAIR);
-    drawMoxigan(hair[0], hair[1]);
+    drawMoxigan(hair[0], hair[1]);*/
     /**************伊丽莎白de衣服（结束）**********************/
 
     /**************伊丽莎白（开始）**********************/
