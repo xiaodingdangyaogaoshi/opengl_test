@@ -65,9 +65,13 @@ static int rightarm_N = 0;
 static int mouth_N = 0;
 static int jupai_N = 0;
 
-
-
-
+//对每一个部分设置旋转角度
+static int leftEye_R = 0;
+static int rightEye_R = 0;
+static int leftarm_R = 0;
+static int rightarm_R = 0;
+static int mouth_R = 0;
+static int jupai_R = 0;
 
 
 int body[2] = { -100, 50 };
@@ -144,14 +148,13 @@ void drawCircle2(int N, double radius, int angleStart = 0, int angleEnd = 360, i
     glEnd();
 }
 
-
 //画左眼
 void drawLeftEye(int x, int y) {
     x = x - 5;
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(leftEye_R, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
     
@@ -169,7 +172,7 @@ void drawRightEye(int x, int y) {
     
     x = x +5;
     glTranslatef(body[0], body[1], 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(rightEye_R, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
     glColor3f(0.0f, 0.0f, 0.0f);
@@ -189,7 +192,7 @@ void drawMouth(int x, int y) {
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(mouth_R, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
     //描边
@@ -202,44 +205,20 @@ void drawMouth(int x, int y) {
 
     glColor3f(0, 0, 0);
     
-
-
 }
 //画脑袋和身体
 void drawHeadandBody(int x, int y) {
-
 
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
     glRotatef(theta, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
-    //
-    //描边
-    /*glColor3f(0, 0, 0);
-    drawCircle2(50, 60, 0, 360, x, y);
-    drawCircle2(60, 70, 0, 360, x, y - 120);*/
-    /*glBegin(GL_LINE_STRIP);
-    glVertex3f(x + 60, y, 0.5f);
-    glVertex3f(x + 65, y - 150, 0.5f);
-    glVertex3f(x - 65, y - 150, 0.5f);
-    glVertex3f(x - 60, y, 0.5f);
-    glEnd();*/
-
+    
     glColor3f(1.0f, 1.0f, 1.0f);
     //画脑袋
     drawCircle(50, 60, 0, 360, x, y);
     drawCircle(60, 70, 0, 360, x, y - 120);
-    /*
-    //画身体
-    glBegin(GL_POLYGON);
-    glVertex3f(x + 60, y, 0.5f);
-    glVertex3f(x - 60, y, 0.5f);
-    glVertex3f(x - 65, y - 150, 0.5f);
-    glVertex3f(x + 65, y - 150, 0.5f);
-    glEnd();
-    */
-    
     
 }
 void drawLeftArm(int x, int y) {
@@ -247,7 +226,7 @@ void drawLeftArm(int x, int y) {
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(leftarm_R, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
 
@@ -266,19 +245,16 @@ void drawRightArm(int x, int y) {
     glLoadIdentity();
 
     glTranslatef(body[0], body[1], 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(rightarm_R, 0, 0, 1);
     glTranslatef(-body[0], -body[1], 0);
 
     glTranslatef(x-50, y-190, 0);
     glRotatef(-110, 0, 0, 1);
-    //glTranslatef(-x-30, -y-28, 0);
-
+    
     glColor3f(1, 1, 1);
     drawCircle(50, 50+rightarm_N, 180, 360, x, y-15, 0.25);
     glColor3f(0, 0, 0);
     
-
-
 }
 
 void drawJuPai(int x, int y) {
@@ -286,7 +262,7 @@ void drawJuPai(int x, int y) {
     glLoadIdentity();
 
     glTranslatef(x, y, 0);
-    glRotatef(theta, 0, 0, 1);
+    glRotatef(jupai_R, 0, 0, 1);
     glTranslatef(-x, -y, 0);
 
     glTranslatef(x, y, 0);
@@ -296,17 +272,17 @@ void drawJuPai(int x, int y) {
     //牌子
     glColor3f(jupai_color[0], jupai_color[1], jupai_color[2]);
     glBegin(GL_POLYGON);
-    glVertex3f(-30-jupai_N, 20+ (60+2*jupai_N)/3-20, 0.5);
-    glVertex3f(-30- jupai_N, -20- (60 + 2 * jupai_N) / 3+20, 0.5);
-    glVertex3f(30+ jupai_N, -20- (60 + 2 * jupai_N) / 3+20, 0.5);
-    glVertex3f(30+ jupai_N, 20+ (60 + 2 * jupai_N) / 3-20, 0.5);
+    glVertex3f(-30-jupai_N, 20+ 2*jupai_N/3, 0.5);
+    glVertex3f(-30- jupai_N, -20- 2 * jupai_N / 3, 0.5);
+    glVertex3f(30+ jupai_N, -20- 2 * jupai_N / 3, 0.5);
+    glVertex3f(30+ jupai_N, 20+ 2 * jupai_N / 3, 0.5);
     glEnd();
 
     glBegin(GL_POLYGON);
-    glVertex3f(-5- jupai_N, -20- (30 + 2 * jupai_N) / 6+5, 0.5);
-    glVertex3f(-5- jupai_N, -50- (30 + 2 * jupai_N) / 6+5, 0.5);
-    glVertex3f(5+ jupai_N, -50- (30 + 2 * jupai_N) / 6+5, 0.5);
-    glVertex3f(5+jupai_N, -20- (30 + 2 * jupai_N) / 6+5, 0.5);
+    glVertex3f(-5- jupai_N/3, -20, 0.5);
+    glVertex3f(-5- jupai_N/3, -50- 2*jupai_N, 0.5);
+    glVertex3f(5+ jupai_N/3, -50- 2*jupai_N, 0.5);
+    glVertex3f(5+jupai_N/3, -20 , 0.5);
     glEnd();
     
 
@@ -333,11 +309,6 @@ void drawMoxigan(int x, int y) {
     glRotatef(30, 0, 0, 1);
     glTranslatef(-50, 0, 0);
     drawCircle(50, 50, 0, 90);
-}
-
-void drawClothes(int x, int y) {
-
-
 }
 
 void myDisplay()
@@ -514,13 +485,11 @@ void judegSectedObject(int x, int y) {
         ptr = selectBuf;
         cout << "ptr : " << *ptr << endl;
         int selected_num = 0;
-
+        cout << "hits::" << hits << endl;
         for (int i = 0; i < hits; i++) {
-            name = *ptr;
-            ptr += 3;
+            name = *ptr;           
+            ptr += 3;          
             ptr += name - 1;
-            cout << i << ":" << *ptr << endl;
-
             BOOL timeToBreak = false;
 
             if (selected_num == 0) {
@@ -655,14 +624,78 @@ void display() {
 void upToRotate(int key, int x, int y) {
 
     if (key == GLUT_KEY_RIGHT) {
-        theta += 10;
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        display();
+        if (mouth_Selected) {
+            leftEye_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftArm_Selected) {
+            rightEye_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightArm_Selected) {
+            rightarm_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (juPai_Selected) {
+            jupai_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (mouth_Selected) {
+            mouth_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftEye_Selected) {
+            leftEye_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightEye_selected) {
+            rightEye_R += 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
     }
     if (key == GLUT_KEY_LEFT) {
-        theta -= 10;
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        display();
+        if (mouth_Selected) {
+            leftEye_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftArm_Selected) {
+            rightarm_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightArm_Selected) {
+            rightarm_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (juPai_Selected) {
+            jupai_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (mouth_Selected) {
+            mouth_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (leftEye_Selected) {
+            leftEye_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
+        if (rightEye_selected) {
+            rightEye_R -= 8;
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            display();
+        }
     }
     if (key == GLUT_KEY_UP) {
         if (mouth_Selected) {
@@ -681,7 +714,7 @@ void upToRotate(int key, int x, int y) {
             display();
         }
         if (juPai_Selected) {
-            jupai_N += 5;
+            jupai_N += 2;
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             display();
         }
@@ -719,7 +752,7 @@ void upToRotate(int key, int x, int y) {
             display();
         }
         if (juPai_Selected) {
-            jupai_N -= 5;
+            jupai_N -= 2;
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             display();
         }
@@ -929,8 +962,7 @@ int main(int argc, char* argv[]) {
     glutAddMenuEntry("blank", 0);
     glutAddMenuEntry("pink", 1);
     glutAddMenuEntry("yellow", 2);
-    glutAddMenuEntry("orange", 3);
-    glutAddMenuEntry("brown", 4);
+    glutAddMenuEntry("orange", 3);    glutAddMenuEntry("brown", 4);
     glutAddMenuEntry("purple", 5);
     glutAddMenuEntry("white", 6);
 
