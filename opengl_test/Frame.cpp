@@ -105,6 +105,42 @@ GLfloat fAspect;
 float xx[50], yy[50] = { 0 };
 const int N = 40;
 
+//橡皮筋效果的变量
+bool DrawingLine = true;
+enum DrawingState { NonePoint, FirstPoint };//枚举绘制的所有阶段 SecondPoint要不要保留再考虑
+static DrawingState NowDrawingState = NonePoint;//NowDrawingState 当前绘制阶段
+int MouseX, MouseY;//变换之后的鼠标坐标
+
+int DrawPointVertices[4];//存放两个顶点坐标
+
+//橡皮筋绘制
+void StartDraw()
+{
+    glClear(GL_COLOR_BUFFER_BIT);           // 清空原颜色
+    glColor3f(0.0, 0.0, 0.0);
+    //实时跟随鼠标来实现橡皮筋效果
+    if (NowDrawingState == FirstPoint) {
+        if (DrawingLine) {
+            glBegin(GL_LINES);
+            glVertex2i(DrawPointVertices[0], DrawPointVertices[1]);
+            glVertex2i(MouseX, MouseY);
+            glEnd();
+        }
+    }
+
+    glFlush();
+}
+//鼠标移动
+void onMouseMovePassive(int x, int y) {//坐标转换
+    MouseX = x - window_width / 2;
+    MouseY = window_height / 2 - y;
+    
+    if (NowDrawingState == FirstPoint) {
+        glutPostRedisplay();
+    }
+}
+
+
 void drawString(const char* str) {
     static int isFirstCall = 1;
     static GLuint lists;
@@ -200,7 +236,7 @@ void drawMouth(int x, int y) {
     
     //上色
     glColor3f(mouth_color[0], mouth_color[1], mouth_color[2]);
-    cout << "mouth_N" << mouth_N << endl;
+    //cout << "mouth_N" << mouth_N << endl;
     drawCircle(50, 80+mouth_N, 55, 125, x, y -18 );
 
     glColor3f(0, 0, 0);
@@ -445,7 +481,7 @@ void judegSectedObject(int x, int y) {
     glGetIntegerv(GL_VIEWPORT, viewport); //获得viewport  
     glSelectBuffer(BUFSIZE, selectBuf);   //指定将“图元列表”（点击记录）
     //返回到selectBuf数组中
-    cout << "selectbuffer" << *selectBuf << endl;
+  
 
     mode = GL_SELECT;
     glRenderMode(mode);   //进入选择模式
@@ -477,15 +513,15 @@ void judegSectedObject(int x, int y) {
        GLint glRenderMode (GLenum mode);
    //控制应用程序是处于渲染模式、选择模式还是反馈模式*/
     
-    cout << hits;
+   
     
     if (hits > 0) {
         
         GLuint name, * ptr;
         ptr = selectBuf;
-        cout << "ptr : " << *ptr << endl;
+        
         int selected_num = 0;
-        cout << "hits::" << hits << endl;
+       
         for (int i = 0; i < hits; i++) {
             name = *ptr;           
             ptr += 3;          
@@ -495,7 +531,7 @@ void judegSectedObject(int x, int y) {
             if (selected_num == 0) {
                 switch (*ptr) {
                 case LEFT_EYE:
-                    cout << "left eye" << endl;
+                    
                     leftEye_Selected = true;
                     selectedToChangeColor = LEFT_EYE;
                     selected_num++;
@@ -504,38 +540,38 @@ void judegSectedObject(int x, int y) {
                     rightEye_selected = true;
                     selectedToChangeColor = RIGHT_EYE;
                     selected_num++;
-                    cout << "right eye" << selected_num << endl;
+                    
                     break;
                 case TIE:
-                    cout << "tie" << endl;
+                   
                     tie_Selected = true;
                     selectedToChangeColor = TIE;
                     selected_num++;
                     break;
                 case JU_PAI:
-                    cout << "jupai" << endl;
+                   
                     juPai_Selected = true;
                     selectedToChangeColor = JU_PAI;
                     selected_num++;
                     break;
                 case HAIR:
-                    cout << "hair" << endl;
+                   
                     hair_Selected = true;
                     selectedToChangeColor = HAIR;
                     selected_num++;
                     break;
                 case LEFT_ARM:
-                    cout << "left arm" << endl;
+                   
                     leftArm_Selected = true;
                     selected_num++;
                     break;
                 case RIGHT_ARM:
-                    cout << "right arm" << endl;
+                   
                     rightArm_Selected = true;
                     selected_num++;
                     break;
                 case MOUTH:
-                    cout << "mouth" << endl;
+                   
                     mouth_Selected = true;
                     selectedToChangeColor = MOUTH;
                     selected_num++;
@@ -559,6 +595,31 @@ void mouseClick(int btn, int state, int x, int y) {
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         std::cout << "鼠标落下：" << x << "," << y << std::endl;
         judegSectedObject(x, y);//命名不规范，
+        //正在画线
+        if (DrawingLine) {
+           
+            if (NowDrawingState == NonePoint) {//一个点都没有画
+                
+                DrawPointVertices[0] = MouseX;
+                DrawPointVertices[1] = MouseY;
+                NowDrawingState = FirstPoint;
+                cout << "第一个点找到了" << endl;
+                return;
+            }
+            else if (NowDrawingState == FirstPoint) {//已经有了一个点
+               
+                DrawPointVertices[2] = MouseX;
+                DrawPointVertices[3] = MouseY;
+                NowDrawingState = NonePoint;//画线结束
+                cout << "画线结束" << endl;
+                return;
+            }
+            else {
+                return;
+            }
+        }
+
+      
     }
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP) {
         std::cout << "鼠标抬起：" << x << "," << y << std::endl;
@@ -618,8 +679,11 @@ void display() {
     glOrtho(-300, 300, -200, 200, -10, 10);//一个平行投影修建空间
     glMatrixMode(GL_MODELVIEW);//投影设置完成后开始画图,需要切换到模型视图矩阵才能正确画图.
     //glLoadIdentity();
+    
     myDisplay();
     glutSwapBuffers();//交换两个缓冲区指针，解决了频繁刷新导致的画面闪烁问题
+    StartDraw();
+    
 }
 void upToRotate(int key, int x, int y) {
 
@@ -862,13 +926,13 @@ void menu(int index) {
     switch (selectedToChangeColor)
     {
     case LEFT_EYE:
-        cout << "zuoyan yanse " << index << endl;
+       
         lefteye_color[0] = color[0];
         lefteye_color[1] = color[1];
         lefteye_color[2] = color[2];
         break;
     case RIGHT_EYE:
-        cout << "youyan yanse " << index << endl;
+        
         righteye_color[0] = color[0];
         righteye_color[1] = color[1];
         righteye_color[2] = color[2];
@@ -946,6 +1010,7 @@ int main(int argc, char* argv[]) {
     glutInit(&argc, argv);
     //函数功能为设置初始显示模式
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
     glutInitWindowSize(window_width, window_height);
     glutCreateWindow("小菲酱");
     //此处init（）方法为自己写的
@@ -956,6 +1021,7 @@ int main(int argc, char* argv[]) {
     glutMouseFunc(mouseClick);
     glutMotionFunc(mouseDrag);
     glutSpecialFunc(upToRotate);
+    glutPassiveMotionFunc(onMouseMovePassive);//注册鼠标移动
 
     glutCreateMenu(menu);
 
